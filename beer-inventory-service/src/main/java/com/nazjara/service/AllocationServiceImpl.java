@@ -4,10 +4,11 @@ import com.nazjara.domain.BeerInventory;
 import com.nazjara.model.BeerOrderDto;
 import com.nazjara.model.BeerOrderLineDto;
 import com.nazjara.repositories.BeerInventoryRepository;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,7 +56,6 @@ public class AllocationServiceImpl implements AllocationService {
             } else if (inventory > 0) { //partial allocation
                 beerOrderLine.setQuantityAllocated(allocatedQty + inventory);
                 beerInventory.setQuantityOnHand(0);
-
             }
 
             if (beerInventory.getQuantityOnHand() == 0) {

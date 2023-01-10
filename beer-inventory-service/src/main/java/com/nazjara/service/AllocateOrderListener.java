@@ -26,7 +26,8 @@ public class AllocateOrderListener {
 
         try {
             var allocated = allocationService.allocateOrder(request.getBeerOrder());
-            resultBuilder.pendingInventory(!allocated);
+            resultBuilder.pendingInventory(!allocated)
+                    .allocationError(false);
         } catch (Exception e) {
             resultBuilder.allocationError(true);
         }
