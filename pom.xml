@@ -25,6 +25,7 @@
         <mapstruct.version>1.4.1.Final</mapstruct.version>
         <spring.state.machine.version>2.2.2.RELEASE</spring.state.machine.version>
         <hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
+        <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
     </properties>
 
     <modules>
@@ -32,6 +33,7 @@
         <module>beer-order-service</module>
         <module>beer-service</module>
         <module>gateway-service</module>
+        <module>discovery-service</module>
     </modules>
 
     <dependencyManagement>
