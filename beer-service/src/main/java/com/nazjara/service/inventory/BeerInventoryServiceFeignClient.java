@@ -1,5 +1,6 @@
 package com.nazjara.service.inventory;
 
+import com.nazjara.config.FeignClientConfig;
 import com.nazjara.model.BeerInventoryDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 import static com.nazjara.service.inventory.BeerInventoryServiceRestTemplateImpl.INVENTORY_PATH;
 
-@FeignClient(name = "beer-inventory-service")
+@FeignClient(name = "beer-inventory-service", configuration = FeignClientConfig.class)
 public interface BeerInventoryServiceFeignClient {
 
     @GetMapping(INVENTORY_PATH)

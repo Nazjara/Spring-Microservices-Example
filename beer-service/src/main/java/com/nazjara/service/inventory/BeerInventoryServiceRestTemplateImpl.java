@@ -2,6 +2,7 @@ package com.nazjara.service.inventory;
 
 import com.nazjara.model.BeerInventoryDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Profile;
@@ -16,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
-@ConfigurationProperties(prefix = "brewery", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "brewery", ignoreUnknownFields = true)
 @Component
 @Profile("discovery-disabled")
 public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryService {
@@ -31,8 +32,12 @@ public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryServic
         this.beerInventoryServiceHost = beerInventoryServiceHost;
     }
 
-    public BeerInventoryServiceRestTemplateImpl(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public BeerInventoryServiceRestTemplateImpl(RestTemplateBuilder restTemplateBuilder,
+                                                @Value("${brewery.inventory-user}") String inventoryUser,
+                                                @Value("${brewery.inventory-password}") String inventoryPassword) {
+        this.restTemplate = restTemplateBuilder
+                .basicAuthentication(inventoryUser, inventoryPassword)
+                .build();
     }
 
     @Override
