@@ -1,5 +1,27 @@
 version: "3"
 services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+    ports:
+      - "9200:9200"
+    environment:
+      discovery.type: single-node
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.2.2
+    ports:
+      - "5601:5601"
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+  filebeat:
+    image:
+      docker.elastic.co/beats/filebeat:8.2.2
+    volumes:
+      - ./filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro # Configuration
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro # Logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Additional container info
+    user: root
+    restart: on-failure
   jms:
     image: vromero/activemq-artemis
     ports:
@@ -39,6 +61,9 @@ services:
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411
       SPRING_ARTEMIS_HOST: jms
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/beer_inventory_service?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
   beer-inventory-failover-service:
     image: nlipkovskyy/beer-inventory-failover-service
     ports:
@@ -49,6 +74,9 @@ services:
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
   beer-service:
     image: nlipkovskyy/beer-service
     ports:
@@ -65,6 +93,9 @@ services:
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411
       SPRING_ARTEMIS_HOST: jms
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/beer_inventory_service?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
   beer-order-service:
     image: nlipkovskyy/beer-order-service
     ports:
@@ -82,6 +113,9 @@ services:
       SPRING_ZIPKIN_BASEURL: http://zipkin
       SPRING_ARTEMIS_HOST: jms
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/beer_inventory_service?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
   gateway-service:
     image: nlipkovskyy/gateway-service
     ports:
@@ -96,3 +130,6 @@ services:
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://netflix:eureka@eureka:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
+    labels:
+      collect_logs_with_filebeat: "true"
+      decode_log_event_to_json_object: "true"
